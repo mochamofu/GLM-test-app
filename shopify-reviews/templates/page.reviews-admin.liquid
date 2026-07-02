@@ -1,0 +1,127 @@
+{% comment %}
+  レビュー管理画面（CSV エクスポート/インポート）
+  -------------------------------------------------------
+  このテンプレートは「ページ」で使用します。
+  管理画面 → オンラインストア → テーマ → カスタマイズ →
+  ページを作成 → テンプレート「page.reviews-admin」を選択。
+
+  このページで:
+  - 全商品のレビューをCSV形式でエクスポート（Excel対応）
+  - 外部のレビューCSVをインポート（プレビュー→取り込み）
+
+  必須ファイル:
+  - assets/papaparse.min.js
+  - assets/reviews-admin.js
+  - assets/reviews.css
+{% endcomment %}
+
+<div
+  class="reviews-admin"
+  data-shop-domain="{{ shop.permanent_domain }}"
+  data-store-domain="{{ shop.domain }}"
+>
+  <header class="reviews-admin__header">
+    <h1>レビュー管理</h1>
+    <p class="reviews-admin__subtitle">
+      レビューのエクスポート（Excel対応）とインポートができます。
+    </p>
+  </header>
+
+  <!-- タブ -->
+  <div class="reviews-admin__tabs" role="tablist">
+    <button type="button" class="reviews-admin__tab is-active" data-tab="export" role="tab">エクスポート</button>
+    <button type="button" class="reviews-admin__tab" data-tab="import" role="tab">インポート</button>
+  </div>
+
+  <!-- ===== エクスポート ===== -->
+  <section class="reviews-admin__panel is-active" data-panel="export">
+    <div class="reviews-admin__actions">
+      <button type="button" class="reviews-admin__btn reviews-admin__btn--primary" data-action="load-reviews">
+        📥 レビューを読み込む
+      </button>
+      <button type="button" class="reviews-admin__btn" data-action="export-csv" disabled>
+        💾 CSV をダウンロード（Excel 対応）
+      </button>
+      <button type="button" class="reviews-admin__btn" data-action="export-sjis" disabled>
+        💾 CSV をダウンロード（Shift-JIS / Excel 日本語）
+      </button>
+    </div>
+
+    <div class="reviews-admin__status" data-role="export-status"></div>
+
+    <div class="reviews-admin__table-wrap">
+      <table class="reviews-admin__table" data-role="export-table">
+        <thead>
+          <tr>
+            <th>商品ID</th>
+            <th>評価</th>
+            <th>タイトル</th>
+            <th>内容</th>
+            <th>メール</th>
+            <th>投稿日</th>
+            <th>更新日</th>
+          </tr>
+        </thead>
+        <tbody data-role="export-tbody">
+          <tr><td colspan="7" class="reviews-admin__empty">「レビューを読み込む」を押してください。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== インポート ===== -->
+  <section class="reviews-admin__panel" data-panel="import">
+    <div class="reviews-admin__file-row">
+      <label class="reviews-admin__file-label">
+        CSV ファイルを選択
+        <input
+          type="file"
+          accept=".csv,text/csv"
+          data-role="import-file"
+          style="display:none;"
+        />
+      </label>
+      <span class="reviews-admin__filename" data-role="import-filename">ファイル未選択</span>
+    </div>
+
+    <p class="reviews-admin__hint">
+      CSV のカラム: <code>product_id, rating, title, content, email, created_at, updated_at</code><br>
+      ※ 1行目はヘッダー行として扱われます。同じメールアドレスのレビューは更新されます。
+    </p>
+
+    <div class="reviews-admin__actions">
+      <button type="button" class="reviews-admin__btn reviews-admin__btn--primary" data-action="parse-csv" disabled>
+        👁 プレビュー
+      </button>
+      <button type="button" class="reviews-admin__btn reviews-admin__btn--success" data-action="import-csv" disabled>
+        ✅ 取り込む
+      </button>
+    </div>
+
+    <div class="reviews-admin__status" data-role="import-status"></div>
+
+    <div class="reviews-admin__table-wrap">
+      <table class="reviews-admin__table" data-role="import-table">
+        <thead>
+          <tr>
+            <th>商品ID</th>
+            <th>評価</th>
+            <th>タイトル</th>
+            <th>内容</th>
+            <th>メール</th>
+            <th>投稿日</th>
+            <th>更新日</th>
+          </tr>
+        </thead>
+        <tbody data-role="import-tbody">
+          <tr><td colspan="7" class="reviews-admin__empty">CSV を選択して「プレビュー」を押してください。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+{{ 'reviews.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'papaparse.min.js' | asset_url }}"></script>
+<script src="{{ 'encoding.min.js' | asset_url }}"></script>
+<script src="{{ 'reviews-admin.js' | asset_url }}" defer></script>

@@ -1,0 +1,119 @@
+{% comment %}
+  商品ページ埋め込み型レビューシステム
+  -------------------------------------------------------
+  使い方: 商品ページのテンプレート（sections/main-product.liquid など）の
+  表示したい場所に以下の1行を貼り付けてください。
+
+    {% render 'product-reviews', product: product %}
+
+  必須ファイル:
+    - assets/reviews.js
+    - assets/reviews.css
+
+  設定（管理画面 → ウェブサイト → アプリとセールスチャネル → 開発者向け設定）で
+  Storefront API の public access token を取得して、下記 SHOPIFY_STOREFRONT_TOKEN に
+  貼り付けてください。詳しくは README.md を参照。
+{% endcomment %}
+
+<div
+  id="product-reviews-{{ product.id }}"
+  class="product-reviews"
+  data-product-id="{{ product.id }}"
+  data-product-handle="{{ product.handle }}"
+  data-shop-domain="{{ shop.permanent_domain }}"
+  data-storefront-token="PASTE_YOUR_STOREFRONT_PUBLIC_TOKEN_HERE"
+>
+  {%- comment -%} 平均評価サマリー {%- endcomment -%}
+  <div class="reviews-summary">
+    <div class="reviews-summary__stars" data-role="avg-stars" aria-label="平均評価">
+      <span class="sr-only">平均評価</span>
+    </div>
+    <div class="reviews-summary__text">
+      <span class="reviews-summary__avg" data-role="avg-number">—</span>
+      <span class="reviews-summary__count">
+        （<span data-role="review-count">0</span> 件のレビュー）
+      </span>
+    </div>
+  </div>
+
+  {%- comment -%} レビュー一覧 {%- endcomment -%}
+  <div class="reviews-list" data-role="reviews-list">
+    <p class="reviews-empty" data-role="reviews-empty">
+      まだレビューはありません。最初のレビューを投稿してみませんか？
+    </p>
+  </div>
+
+  {%- comment -%} 投稿フォーム {%- endcomment -%}
+  <div class="reviews-form-wrapper">
+    <h3 class="reviews-form__title">レビューを書く</h3>
+    <form class="reviews-form" data-role="review-form" novalidate>
+      <div class="reviews-form__field">
+        <label class="reviews-form__label">評価</label>
+        <div
+          class="star-input"
+          data-role="star-input"
+          data-value="0"
+          role="radiogroup"
+          aria-label="星1〜5（0.5刻み）"
+        >
+          {%- for i in (1..5) -%}
+            <button
+              type="button"
+              class="star-input__star"
+              data-star-half="{{ i | minus: 0.5 }}"
+              data-star-full="{{ i }}"
+              aria-label="{{ i }} つ星"
+            >
+              ★
+            </button>
+          {%- endfor -%}
+          <span class="star-input__value" data-role="star-value">未選択</span>
+        </div>
+      </div>
+
+      <div class="reviews-form__field">
+        <label class="reviews-form__label" for="review-title-{{ product.id }}">タイトル</label>
+        <input
+          type="text"
+          id="review-title-{{ product.id }}"
+          class="reviews-form__input"
+          data-role="input-title"
+          placeholder="例：とても良かったです"
+          maxlength="100"
+          required
+        />
+      </div>
+
+      <div class="reviews-form__field">
+        <label class="reviews-form__label" for="review-content-{{ product.id }}">レビュー内容</label>
+        <textarea
+          id="review-content-{{ product.id }}"
+          class="reviews-form__textarea"
+          data-role="input-content"
+          rows="4"
+          placeholder="商品についての感想をお書きください"
+          maxlength="1000"
+          required
+        ></textarea>
+      </div>
+
+      <div class="reviews-form__field">
+        <label class="reviews-form__label" for="review-email-{{ product.id }}">メールアドレス</label>
+        <input
+          type="email"
+          id="review-email-{{ product.id }}"
+          class="reviews-form__input"
+          data-role="input-email"
+          placeholder="you@example.com"
+          required
+        />
+      </div>
+
+      <button type="submit" class="reviews-form__submit">レビューを投稿</button>
+      <p class="reviews-form__message" data-role="form-message"></p>
+    </form>
+  </div>
+</div>
+
+{{ 'reviews.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'reviews.js' | asset_url }}" defer></script>

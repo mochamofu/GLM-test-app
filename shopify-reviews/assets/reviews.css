@@ -1,0 +1,262 @@
+/* ===== 商品ページ埋め込み型レビュー スタイル ===== */
+
+.product-reviews {
+  --reviews-accent: #f5a623;
+  --reviews-text: #1a1a1a;
+  --reviews-muted: #6b7280;
+  --reviews-border: #e5e7eb;
+  --reviews-bg: #ffffff;
+  --reviews-bg-alt: #f9fafb;
+  max-width: 720px;
+  margin: 32px auto;
+  padding: 24px;
+  color: var(--reviews-text);
+  font-family: inherit;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===== 平均サマリー ===== */
+.reviews-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--reviews-border);
+}
+
+.reviews-summary__stars .stars {
+  display: inline-block;
+  position: relative;
+  font-family: Arial, sans-serif;
+  letter-spacing: 2px;
+}
+
+.reviews-summary__text {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+.reviews-summary__avg {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--reviews-text);
+}
+
+.reviews-summary__count {
+  color: var(--reviews-muted);
+  font-size: 13px;
+}
+
+/* ===== 星共通（重ねて0.5刻み表現） ===== */
+.stars {
+  display: inline-block;
+  position: relative;
+  font-family: Arial, sans-serif;
+  letter-spacing: 2px;
+  color: #d1d5db; /* 空星の色 */
+}
+
+.stars__bg {
+  color: #d1d5db;
+}
+
+.stars__fg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--reviews-accent);
+}
+
+/* ===== レビュー一覧 ===== */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.reviews-empty {
+  color: var(--reviews-muted);
+  text-align: center;
+  padding: 24px;
+  font-size: 14px;
+}
+
+.review-item {
+  padding: 16px;
+  background: var(--reviews-bg-alt);
+  border-radius: 8px;
+  border: 1px solid var(--reviews-border);
+}
+
+.review-item__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.review-item__title {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.review-item__content {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+  white-space: pre-wrap;
+  margin-bottom: 8px;
+}
+
+.review-item__meta {
+  font-size: 12px;
+  color: var(--reviews-muted);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.review-item__updated {
+  color: #9ca3af;
+}
+
+/* ===== 投稿フォーム ===== */
+.reviews-form-wrapper {
+  border-top: 1px solid var(--reviews-border);
+  padding-top: 24px;
+}
+
+.reviews-form__title {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.reviews-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reviews-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reviews-form__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.reviews-form__input,
+.reviews-form__textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--reviews-border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--reviews-bg);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.reviews-form__input:focus,
+.reviews-form__textarea:focus {
+  outline: none;
+  border-color: var(--reviews-accent);
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.15);
+}
+
+.reviews-form__textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.reviews-form__submit {
+  align-self: flex-start;
+  padding: 10px 24px;
+  background: var(--reviews-accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.reviews-form__submit:hover {
+  background: #e09515;
+}
+
+.reviews-form__submit:active {
+  transform: scale(0.98);
+}
+
+.reviews-form__message {
+  font-size: 13px;
+  min-height: 18px;
+}
+
+.reviews-form__message.is-success {
+  color: #059669;
+}
+
+.reviews-form__message.is-error {
+  color: #dc2626;
+}
+
+/* ===== 星入力（0.5刻み） ===== */
+.star-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+}
+
+.star-input__star {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 28px;
+  line-height: 1;
+  color: #d1d5db;
+  padding: 0 2px;
+  position: relative;
+  transition: color 0.1s;
+}
+
+.star-input__star.is-full {
+  color: var(--reviews-accent);
+}
+
+.star-input__star.is-half {
+  background: linear-gradient(90deg, var(--reviews-accent) 50%, transparent 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--reviews-accent);
+}
+
+.star-input__value {
+  margin-left: 8px;
+  font-size: 14px;
+  color: var(--reviews-muted);
+}

@@ -3,35 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ぷよぷよ</title>
+  <title>ぷよぷよ 💎 宝石版</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="game-container">
-    <h1>ぷよぷよ</h1>
-    <div class="game-layout">
-      <div class="side-panel">
-        <div class="next-box">
-          <div class="label">NEXT</div>
-          <canvas id="next" width="120" height="80"></canvas>
-        </div>
-        <div class="score-box">
-          <div class="label">SCORE</div>
-          <div id="score">0</div>
-        </div>
-        <div class="controls">
-          <div class="label">操作</div>
-          <div class="key">← →　移動</div>
-          <div class="key">↑　　回転</div>
-          <div class="key">↓　　落下</div>
-          <div class="key">Space 一気落ち</div>
-        </div>
-      </div>
-      <canvas id="board" width="300" height="600"></canvas>
+  <!-- メニュー画面 -->
+  <div id="menu" class="screen">
+    <h1>💎 ぷよぷよ 💎</h1>
+    <div class="menu-buttons">
+      <button id="btn-solo" class="menu-btn">ひとりで</button>
+      <button id="btn-vs" class="menu-btn">CPUと対戦</button>
     </div>
-    <button id="start">スタート / リセット</button>
+    <div class="howto">
+      <div class="label">操作方法</div>
+      <div>← →　移動 ／ ↑　回転 ／ ↓　落下</div>
+      <div>Space　一気落下 ／ P　一時停止</div>
+      <div class="hint">宝石を4つ以上つなげて消そう！連鎖で相手におじゃまを送れるよ</div>
+    </div>
+  </div>
+
+  <!-- ゲーム画面 -->
+  <div id="game-screen" class="screen hidden">
+    <div class="topbar">
+      <button id="btn-pause">⏸ 一時停止</button>
+      <button id="btn-mute">🔊 音あり</button>
+      <button id="btn-quit">メニューへ</button>
+    </div>
+    <div id="stage"></div>
     <div id="message"></div>
   </div>
+
   <script src="game.js"></script>
 </body>
 </html>

@@ -5,7 +5,10 @@
 }
 
 body {
-  background: #1a1a2e;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(58, 123, 255, 0.15), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(224, 39, 107, 0.15), transparent 40%),
+    #1a1a2e;
   color: #eee;
   font-family: "Segoe UI", "Hiragino Sans", Meiryo, sans-serif;
   min-height: 100vh;
@@ -15,99 +18,250 @@ body {
   padding: 16px;
 }
 
-.game-container {
+.screen.hidden {
+  display: none;
+}
+
+/* ===== メニュー ===== */
+#menu {
   text-align: center;
 }
 
 h1 {
   color: #ffd700;
-  margin-bottom: 16px;
-  letter-spacing: 0.2em;
-  text-shadow: 2px 2px 0 #b8860b;
+  margin-bottom: 24px;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 16px rgba(255, 215, 0, 0.5), 2px 2px 0 #b8860b;
+  font-size: 42px;
+  animation: shimmer 3s ease-in-out infinite;
 }
 
-.game-layout {
+@keyframes shimmer {
+  0%, 100% { text-shadow: 0 0 16px rgba(255, 215, 0, 0.5), 2px 2px 0 #b8860b; }
+  50% { text-shadow: 0 0 28px rgba(255, 215, 0, 0.9), 2px 2px 0 #b8860b; }
+}
+
+.menu-buttons {
   display: flex;
+  flex-direction: column;
   gap: 16px;
+  margin-bottom: 32px;
+}
+
+.menu-btn {
+  padding: 16px 40px;
+  font-size: 20px;
+  background: linear-gradient(135deg, #e94560, #c81d4e);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  min-width: 280px;
+  transition: transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
+}
+
+.menu-btn:hover {
+  background: linear-gradient(135deg, #ff5e7e, #e94560);
+  box-shadow: 0 6px 18px rgba(233, 69, 96, 0.5);
+}
+
+.menu-btn:active {
+  transform: scale(0.97);
+}
+
+.howto {
+  background: rgba(22, 33, 62, 0.8);
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  padding: 16px 24px;
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.8;
+  max-width: 360px;
+}
+
+.howto .label {
+  color: #8ecae6;
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+}
+
+.howto .hint {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffd166;
+  font-size: 12px;
+}
+
+/* ===== ゲーム画面 ===== */
+.topbar {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.topbar button {
+  padding: 8px 16px;
+  font-size: 14px;
+  background: #0f3460;
+  color: #fff;
+  border: 1px solid #1d4e89;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.topbar button:hover {
+  background: #1d4e89;
+}
+
+.topbar button:active {
+  transform: scale(0.97);
+}
+
+#game-screen {
+  text-align: center;
+}
+
+#stage {
+  display: flex;
+  gap: 32px;
   justify-content: center;
   align-items: flex-start;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.player-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-name {
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+}
+
+.player-name.cpu {
+  color: #e94560;
+}
+
+.player-name.you {
+  color: #8ecae6;
+}
+
+.player-board {
+  display: flex;
+  gap: 8px;
 }
 
 .side-panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  min-width: 140px;
+  gap: 8px;
+  width: 90px;
 }
 
-.next-box,
-.score-box,
-.controls {
-  background: #16213e;
-  border: 2px solid #0f3460;
-  border-radius: 8px;
-  padding: 10px;
-}
-
-.label {
-  font-size: 12px;
+.side-panel .label {
+  font-size: 11px;
   color: #8ecae6;
-  margin-bottom: 6px;
   letter-spacing: 0.1em;
 }
 
-#next {
-  display: block;
-  margin: 0 auto;
-  background: #0d1b2a;
-  border-radius: 4px;
+.next-box,
+.score-box {
+  background: rgba(22, 33, 62, 0.8);
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  padding: 6px;
 }
 
-#score {
-  font-size: 24px;
+.score {
+  font-size: 20px;
   font-weight: bold;
   color: #ffd700;
 }
 
-.controls .key {
-  font-size: 12px;
-  color: #ccc;
-  text-align: left;
-  margin: 4px 0;
+.attack-bar {
+  background: rgba(22, 33, 62, 0.8);
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  padding: 6px;
 }
 
-#board {
+.attack-meter {
+  height: 10px;
+  background: #0d1b2a;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.attack-meter-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ffd166, #e94560);
+  transition: width 0.2s ease;
+}
+
+.attack-count {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffd166;
+}
+
+canvas.board-canvas {
   background: #0d1b2a;
   border: 4px solid #0f3460;
   border-radius: 8px;
   display: block;
-}
-
-#start {
-  margin-top: 16px;
-  padding: 10px 28px;
-  font-size: 16px;
-  background: #e94560;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  letter-spacing: 0.1em;
-}
-
-#start:hover {
-  background: #ff5e7e;
-}
-
-#start:active {
-  transform: scale(0.97);
+  box-shadow: 0 0 24px rgba(58, 123, 255, 0.15);
 }
 
 #message {
-  margin-top: 12px;
-  font-size: 18px;
+  margin-top: 16px;
+  font-size: 22px;
   font-weight: bold;
-  min-height: 24px;
+  min-height: 28px;
   color: #ffd700;
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+}
+
+#message.win {
+  color: #06d6a0;
+  text-shadow: 0 0 12px rgba(6, 214, 160, 0.6);
+}
+
+#message.lose {
+  color: #e94560;
+  text-shadow: 0 0 12px rgba(233, 69, 96, 0.6);
+}
+
+/* 一時停止オーバーレイ */
+.pause-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(13, 27, 42, 0.88);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 48px;
+  font-weight: bold;
+  color: #ffd700;
+  letter-spacing: 0.3em;
+  border-radius: 8px;
+  text-shadow: 0 0 24px rgba(255, 215, 0, 0.6);
+  z-index: 10;
 }

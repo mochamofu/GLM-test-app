@@ -4,21 +4,14 @@ ZCode（GLM）で作ったベンチマーク・作品例のコレクション。
 
 ## 🎮 作品一覧
 
-| 作品 | 説明 | パス |
-|------|------|------|
-| 💎 ぷよぷよ | 宝石が連鎖する落ち物パズル。1人用 / CPU対戦 | [`puyo-puyo/`](./puyo-puyo/) |
+### 💎 ぷよぷよ（宝石版）
+落ち物パズル。宝石を4つ以上つなげて消す。1人用 / CPU対戦。
 
-> 各フォルダの `index.html` をブラウザで開けばすぐ遊べます。
+**👉 [ブラウザで遊ぶ](https://mochamofu.github.io/GLM-test-app/puyo-puyo/)**
 
-## 遊び方（共通）
+> 操作: ← → 移動 ／ ↑ 回転 ／ ↓ 落下 ／ Space 一気落下 ／ P 一時停止
 
-各作品フォルダ内の `index.html` をダブルクリック、または以下のコマンドで:
-
-```bash
-# ぷよぷよの場合
-cd puyo-puyo
-start index.html   # Windows
-```
+📁 ソースコード: [`puyo-puyo/`](./puyo-puyo/)
 
 ---
 

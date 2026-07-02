@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ぷよぷよ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game-container">
+    <h1>ぷよぷよ</h1>
+    <div class="game-layout">
+      <div class="side-panel">
+        <div class="next-box">
+          <div class="label">NEXT</div>
+          <canvas id="next" width="120" height="80"></canvas>
+        </div>
+        <div class="score-box">
+          <div class="label">SCORE</div>
+          <div id="score">0</div>
+        </div>
+        <div class="controls">
+          <div class="label">操作</div>
+          <div class="key">← →　移動</div>
+          <div class="key">↑　　回転</div>
+          <div class="key">↓　　落下</div>
+          <div class="key">Space 一気落ち</div>
+        </div>
+      </div>
+      <canvas id="board" width="300" height="600"></canvas>
+    </div>
+    <button id="start">スタート / リセット</button>
+    <div id="message"></div>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>

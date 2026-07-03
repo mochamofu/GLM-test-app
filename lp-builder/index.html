@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎨 LP Builder — 日本向け ランディングページ制作お助けアプリ</title>
+  <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+
+  <!-- ============ トップバー ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🎨</span>
+      <span class="title">LP Builder</span>
+      <span class="subtitle" id="project-name-label">無題のプロジェクト</span>
+    </div>
+
+    <div class="topbar-actions">
+      <!-- 履歴 -->
+      <button class="tbtn" id="btn-undo" title="元に戻す (Ctrl+Z)">↶</button>
+      <button class="tbtn" id="btn-redo" title="やり直し (Ctrl+Y)">↷</button>
+      <span class="sep"></span>
+
+      <!-- 保存・読込 -->
+      <button class="tbtn" id="btn-save-json" title="プロジェクトを JSON で保存">💾 保存</button>
+      <label class="tbtn" title="JSON を読み込む">📂 読込
+        <input type="file" id="input-load-json" accept="application/json,.json" hidden>
+      </label>
+      <span class="sep"></span>
+
+      <!-- エクスポート -->
+      <button class="tbtn primary" id="btn-export-html" title="完全 HTML を出力">⬇️ HTML出力</button>
+      <button class="tbtn primary" id="btn-export-liquid" title="Shopify Liquid section を出力">⬇️ Liquid出力</button>
+      <span class="sep"></span>
+
+      <!-- プレビュー -->
+      <button class="tbtn" id="btn-open-preview" title="プレビューを別タブで開く">🔍 別タブ</button>
+    </div>
+  </header>
+
+  <!-- ============ メイン 3 ペイン ============ -->
+  <div class="workspace">
+
+    <!-- ===== 左ペイン：モジュール追加・テンプレート ===== -->
+    <aside class="pane pane-left">
+      <div class="pane-tabs">
+        <button class="pane-tab active" data-left-tab="modules">モジュール</button>
+        <button class="pane-tab" data-left-tab="templates">テンプレ<span class="count">40</span></button>
+      </div>
+
+      <!-- モジュール一覧 -->
+      <div class="pane-body" id="left-modules">
+        <p class="hint-text">下記からモジュールを追加できます。</p>
+        <div class="module-grid" id="module-list"><!-- app.js で生成 --></div>
+      </div>
+
+      <!-- テンプレート一覧 -->
+      <div class="pane-body hidden" id="left-templates">
+        <p class="hint-text">ジャンル × 配色 から選んで、サンプル構成を読み込みます。</p>
+        <div class="filter-row">
+          <select id="template-genre-filter" class="select">
+            <option value="">すべてのジャンル</option>
+            <option value="cosme">コスメ・美容</option>
+            <option value="fashion">ファッション・雑貨</option>
+            <option value="digital">デジタル・サービス</option>
+          </select>
+        </div>
+        <div class="template-list" id="template-list"><!-- app.js で生成 --></div>
+      </div>
+    </aside>
+
+    <!-- ===== 中央ペイン：ライブプレビュー ===== -->
+    <main class="pane pane-center">
+      <div class="preview-toolbar">
+        <!-- デバイストグル（ご要望：右上のトグルで逐次確認） -->
+        <div class="device-toggle">
+          <button class="dev-btn active" data-device="pc" title="PC (1280px)">🖥️ PC</button>
+          <button class="dev-btn" data-device="tablet" title="タブレット (768px)">📱 タブレット</button>
+          <button class="dev-btn" data-device="sp" title="スマホ (375px)">📱 SP</button>
+        </div>
+        <div class="preview-meta">
+          <span id="preview-size">1280px</span>
+        </div>
+      </div>
+      <div class="preview-stage" id="preview-stage">
+        <div class="preview-sizer" id="preview-sizer">
+          <iframe id="preview-iframe" title="プレビュー" sandbox="allow-same-origin allow-scripts"></iframe>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== 右ペイン：モジュール編集 ===== -->
+    <aside class="pane pane-right">
+      <div class="pane-tabs">
+        <button class="pane-tab active" data-right-tab="edit">編集</button>
+        <button class="pane-tab" data-right-tab="project">プロジェクト</button>
+      </div>
+
+      <!-- 編集フォーム -->
+      <div class="pane-body" id="right-edit">
+        <div id="inspector-empty" class="empty-state">
+          <div class="empty-icon">👆</div>
+          <p>モジュールをクリックして編集</p>
+          <p class="muted">中央のプレビューでモジュールを選択するか、左ペインから追加してください。</p>
+        </div>
+        <div id="inspector-content" class="hidden"></div>
+      </div>
+
+      <!-- プロジェクト設定 -->
+      <div class="pane-body hidden" id="right-project">
+        <div class="inspector-section">
+          <label class="fld-label">プロジェクト名</label>
+          <input type="text" class="text-input" id="proj-name" placeholder="プロジェクト名">
+        </div>
+        <div class="inspector-section">
+          <label class="fld-label">LP タイトル（ページ名）</label>
+          <input type="text" class="text-input" id="proj-title" placeholder="商品名LPなど">
+        </div>
+        <div class="inspector-section">
+          <label class="fld-label">フォント</label>
+          <select class="select" id="proj-font">
+            <option value="'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif">ヒラギノ / Noto Sans JP（標準）</option>
+            <option value="'Yu Gothic','YuGothic','Noto Sans JP',sans-serif">游ゴシック系</option>
+            <option value="'Noto Serif JP','Hiragino Mincho ProN',serif">明朝（Noto Serif JP）</option>
+            <option value="'Hiragino Maru Gothic ProN','M PLUS Rounded Sans',sans-serif">丸ゴシック系</option>
+            <option value="'Noto Sans JP','Helvetica Neue',sans-serif">ゴシック軽め</option>
+          </select>
+        </div>
+        <div class="inspector-section">
+          <label class="fld-label">基本の角丸（px）</label>
+          <input type="number" class="text-input" id="proj-radius" min="0" max="48" value="12">
+        </div>
+
+        <div class="inspector-section">
+          <label class="fld-label">テーマカラー</label>
+          <div class="color-row">
+            <input type="color" class="color-input" id="proj-color-primary" value="#e87a8b">
+            <input type="text" class="text-input mono" id="proj-color-primary-text" value="#e87a8b">
+          </div>
+        </div>
+        <div class="inspector-section">
+          <label class="fld-label">アクセントカラー</label>
+          <div class="color-row">
+            <input type="color" class="color-input" id="proj-color-accent" value="#f6c453">
+            <input type="text" class="text-input mono" id="proj-color-accent-text" value="#f6c453">
+          </div>
+        </div>
+        <div class="inspector-section">
+          <label class="fld-label">背景色</label>
+          <div class="color-row">
+            <input type="color" class="color-input" id="proj-color-bg" value="#ffffff">
+            <input type="text" class="text-input mono" id="proj-color-bg-text" value="#ffffff">
+          </div>
+        </div>
+        <div class="inspector-section">
+          <label class="fld-label">文字色</label>
+          <div class="color-row">
+            <input type="color" class="color-input" id="proj-color-text" value="#2d2a26">
+            <input type="text" class="text-input mono" id="proj-color-text-text" value="#2d2a26">
+          </div>
+        </div>
+
+        <div class="inspector-section actions">
+          <button class="tbtn danger" id="btn-clear-all">🗑️ モジュールを全削除</button>
+          <button class="tbtn" id="btn-new-project">✨ 新規プロジェクト</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ============ エクスポート モーダル ============ -->
+  <div class="modal hidden" id="export-modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="export-modal-title">出力</h2>
+        <button class="modal-close" id="export-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="export-actions">
+          <button class="tbtn primary" id="export-download">⬇️ ファイルとして保存</button>
+          <button class="tbtn" id="export-copy">📋 コピー</button>
+          <button class="tbtn" id="export-open">↗️ 別タブで表示</button>
+        </div>
+        <pre class="export-code" id="export-code"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ステータスバー ============ -->
+  <footer class="statusbar">
+    <span id="status-msg">準備完了</span>
+    <span class="spacer"></span>
+    <span id="status-count">0 モジュール</span>
+    <span id="status-saved" class="muted">— 自動保存: オフ</span>
+  </footer>
+
+  <!-- ============ スクリプト（バニラ JS, file:// で動くよう classic script） ============ -->
+  <script src="js/lp-styles.js"></script>
+  <script src="js/templates.js"></script>
+  <script src="js/modules.js"></script>
+  <script src="js/persistence.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/inspector.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

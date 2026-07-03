@@ -26,4 +26,15 @@ ZCode（GLM）で作ったベンチマーク・作品例のコレクション。
 
 ---
 
+### 🎨 LP Builder（日本向け LP 制作アプリ）
+モジュールを組み合わせて日本向けランディングページを作るビジュアルエディタ。16種のモジュール・40種のテンプレ（商材ジャンル×配色）。PC/スマホのライブプレビュー付き。完成したら完全HTML ＋ Shopify Liquid section の両方に出力。
+
+**👉 [ブラウザで開く](https://mochamofu.github.io/GLM-test-app/lp-builder/)**
+
+> テンプレ選ぶ → 画像・文章を入れる → HTML/Liquid 出力。Shopify の LP 制作をお助け。
+
+📁 ソースコード: [`lp-builder/`](./lp-builder/)
+
+---
+
 _このリポジトリは ZCode エージェントの能力評価・デモ用の作品集です。_

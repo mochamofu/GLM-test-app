@@ -46,6 +46,50 @@
   tick(); setInterval(tick, 1000);
 })();`;
 
+  // プレビュー iframe 内で動く: 親への高さ通知 ＋ モジュール選択通知 ＋ スライダー等の簡易動作
+  const EDITOR_HOOK_JS = `
+(function(){
+  // 親へドキュメント高さを通知（ミニマップ用）
+  function notifyHeight(){
+    var h = document.documentElement.scrollHeight;
+    parent.postMessage({ source:'lp-builder', type:'height', height: h }, '*');
+  }
+  // 親から選択モジュールへのスクロール要求を受信
+  window.addEventListener('message', function(e){
+    var d = e.data;
+    if (!d || d.target !== 'lp-iframe') return;
+    if (d.type === 'scrollTo' && d.moduleId) {
+      var el = document.querySelector('[data-mid="' + d.moduleId + '"]');
+      if (el) el.scrollIntoView({ behavior: d.smooth === false ? 'auto' : 'smooth', block: 'center' });
+    }
+  });
+  // ロード完了・画像ロード・リサイズで高さ通知
+  notifyHeight();
+  window.addEventListener('load', notifyHeight);
+  window.addEventListener('resize', notifyHeight);
+  setTimeout(notifyHeight, 300);
+  setTimeout(notifyHeight, 1200);
+  document.querySelectorAll('img').forEach(function(img){
+    if (!img.complete) img.addEventListener('load', notifyHeight);
+  });
+  // モジュール選択クリック通知
+  document.addEventListener('click', function(e){
+    var el = e.target.closest ? e.target.closest('[data-mid]') : null;
+    if (el) { e.preventDefault(); parent.postMessage({ source:'lp-builder', type:'select', moduleId: el.getAttribute('data-mid') }, '*'); }
+  }, true);
+  // お知らせスライダー簡易切替
+  document.querySelectorAll('.lp-notice-slider').forEach(function(slider){
+    var slides = slider.querySelectorAll('.lp-nt-slide');
+    if (slides.length < 2) return;
+    var i = 0;
+    setInterval(function(){
+      slides[i].classList.remove('active');
+      i = (i+1) % slides.length;
+      slides[i].classList.add('active');
+    }, 3500);
+  });
+})();`;
+
   // モジュール HTML を組み立て（data-mid 付きで編集選択に使用可）
   function renderModules(project, opts) {
     opts = opts || {};
@@ -138,20 +182,7 @@ ${opts.editable ? '<script>'+EDITOR_HOOK_JS+'</script>' : ''}
   }
 
   // プレビュー iframe 内で動く、モジュール選択イベントのフック
-  const EDITOR_HOOK_JS = `
-(function(){
-  function fire(data){
-    parent.postMessage({ source:'lp-builder', type:'select', moduleId: data }, '*');
-  }
-  document.addEventListener('click', function(e){
-    var el = e.target.closest ? e.target.closest('[data-mid]') : null;
-    if (el) {
-      // リンク/Cta の既定動作は編集中は無効化
-      e.preventDefault();
-      fire(el.getAttribute('data-mid'));
-    }
-  }, true);
-})();`;
+  // （EDITOR_HOOK_JS は上部で定義済み: 高さ通知＋選択通知＋スライダー動作を含む）
 
   function escapeHTML(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function escapeAttr(s) { return escapeHTML(s).replace(/"/g,'&quot;'); }

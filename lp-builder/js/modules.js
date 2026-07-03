@@ -122,12 +122,28 @@
             if (d.linkUrl) return `<div class="lp-notice lp-notice-banner" data-variant="banner" style="${style}"><a href="${esc(d.linkUrl)}" style="color:inherit">${inner}</a></div>`;
             return `<div class="lp-notice lp-notice-banner" data-variant="banner" style="${style}">${inner}</div>`;
           }
+        },
+        { id: 'slider', name: 'スライダー（複数告知）',
+          schema: [
+            { key: 'bg', label: '背景色', type: 'color', default: '#1f3a5f' },
+            { key: 'fg', label: '文字色', type: 'color', default: '#ffffff' },
+            { key: 'slides', label: '告知（1行1つ: テキスト|URL）', type: 'textarea', default:'🎁 全品送料無料|/sale\n⏰ 本日24時までタイムセール|/sale\n💰 初回限定10%OFFクーポン|/coupon' }
+          ],
+          render(d, ctx) {
+            const slides = (d.slides||'').split('\n').map(l=>l.trim()).filter(Boolean).map((l,i) => {
+              const [text,url] = l.split('|');
+              const u = esc((url||'#').trim()), t = esc((text||'').trim());
+              return `<div class="lp-nt-slide${i===0?' active':''}"><a href="${u}" style="color:inherit">${t}</a></div>`;
+            });
+            const style = `background:${esc(d.bg)};color:${esc(d.fg)};`;
+            return `<div class="lp-notice lp-notice-slider" data-variant="slider" style="${style}"><div class="lp-nt-slider-track">${slides.join('')}</div></div>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       2. ヒーロー  A.背景全面 / B.分割(画像+文章) / C.中央寄せ
+       2. ヒーロー  A.背景全面 / B.分割(画像+文章) / C.中央寄せ / D.動画背景風
        ============================================================ */
     {
       type: 'hero', name: 'ヒーロー（ファーストビュー）', icon: '🌅',
@@ -203,12 +219,37 @@
               </div>
             </section>`;
           }
+        },
+        { id: 'cinematic', name: '動画背景風（要素重ね）',
+          schema: [
+            { key: 'image', label: '背景画像', type: 'image', default: '' },
+            { key: 'eyebrow', label: 'アイキャッチ', type: 'text', default: 'OFFICIAL MOVIE' },
+            { key: 'title', label: 'キャッチコピー', type: 'text', default: 'ひとつ上の、<br>毎日へ。' },
+            { key: 'subtitle', label: 'サブテキスト', type: 'textarea', default: '映像で伝える、商品のすべて。' },
+            { key: 'ctaText', label: '再生ボタン文言', type: 'text', default: '▶ 動画を見る' },
+            { key: 'ctaUrl', label: 'リンク先', type: 'url', default: '#cta' },
+            { key: 'playLabel', label: '動画タイトル', type: 'text', default: '商品紹介映像 (1:30)' },
+            { key: 'height', label: '高さ（px）', type: 'number', default: 640 }
+          ],
+          render(d, ctx) {
+            const style = `background-image:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.65)),url('${ctx.img(d.image,1600,900,'ヒーロー画像')}');min-height:${esc(d.height)}px;`;
+            return `<section class="lp-hero lp-hero-cinematic" data-variant="cinematic" style="${style}">
+              <div class="lp-container lp-center lp-hero-cinematic-inner">
+                ${d.eyebrow?`<p class="lp-eyebrow lp-hero-cine-eb">${esc(d.eyebrow)}</p>`:''}
+                <h1 class="lp-hero-title">${d.title}</h1>
+                ${d.subtitle?`<p class="lp-hero-sub">${nl2br(d.subtitle)}</p>`:''}
+                <button class="lp-hero-play" onclick="void(0)" aria-label="${esc(d.ctaText)}"><span class="lp-hero-play-icon">▶</span></button>
+                ${d.playLabel?`<p class="lp-hero-play-label">${esc(d.playLabel)}</p>`:''}
+                ${d.ctaText?`<a class="lp-hero-play-cta" href="${esc(d.ctaUrl||'#cta')}">${esc(d.ctaText)}</a>`:''}
+              </div>
+            </section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       3. リード文  A.中央寄せ / B.左寄せ+装飾 / C.引用風
+       3. リード文  A.中央寄せ / B.左寄せ+装飾 / C.引用風 / D.数字強調
        ============================================================ */
     {
       type: 'lead', name: 'リード文（導入）', icon: '📝',
@@ -256,12 +297,35 @@
               ${d.cite?`<cite class="lp-quote-cite">— ${esc(d.cite)}</cite>`:''}
             </div></section>`;
           }
+        },
+        { id: 'stats', name: '数字強調（統計3つ）',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: 'NUMBERS' },
+            { key: 'title', label: '見出し', type: 'text', default: '数字でわかる、選ばれる理由' },
+            { key: 'stats', label: '統計', type: 'richlist', itemDefault:{num:'98%',label:'お客様満足度'},
+              default:[
+                { num:'98%', label:'お客様満足度' },
+                { num:'120万', label:'累計販売本数' },
+                { num:'30日', label:'返金保証' }
+              ],
+              itemFields:[{key:'num',label:'数字',type:'text'},{key:'label',label:'説明',type:'text'}] },
+            { key: 'bg', label: '背景色', type: 'color', default: '#1f3a5f' },
+            { key: 'fg', label: '文字色', type: 'color', default: '#ffffff' }
+          ],
+          render(d, ctx) {
+            const items = (d.stats||[]).map(s => `<div class="lp-stat"><div class="lp-stat-num">${esc(s.num)}</div><div class="lp-stat-label">${esc(s.label)}</div></div>`).join('');
+            return `<section class="lp-lead lp-lead-stats" data-variant="stats" style="background:${esc(d.bg)};color:${esc(d.fg)}"><div class="lp-container lp-center">
+              ${d.eyebrow?`<p class="lp-eyebrow lp-stat-eb">${esc(d.eyebrow)}</p>`:''}
+              <h2 class="lp-h2 lp-stat-title">${esc(d.title)}</h2>
+              <div class="lp-stat-grid">${items}</div>
+            </div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       4. 3つのメリット  A.アイコン3カラム / B.カード(画像) / C.縦並び番号
+       4. 3つのメリット  A.アイコン3カラム / B.カード(画像) / C.縦並び番号 / D.横スクロール
        ============================================================ */
     {
       type: 'features', name: '3つのメリット', icon: '✨',
@@ -323,12 +387,30 @@
               <div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div>
               <div class="lp-feature-num-list">${items}</div></div></section>`;
           }
+        },
+        { id: 'scroll', name: '横スクロール（大カード）',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: 'FEATURES' },
+            { key: 'title', label: '見出し', type: 'text', default: 'こだわりのポイント' },
+            { key: 'features', label: '特徴リスト', type: 'richlist', itemDefault:{icon:'✨',title:'特徴',desc:'説明文'},
+              default:[
+                { icon:'💧', title:'うるおい持続', desc:'独自の保湿処方で朝まで潤い。' },
+                { icon:'🌱', title:'無添加処方', desc:'敏感肌の方にも優しく。' },
+                { icon:'🌸', title:'国産・安心', desc:'日本の工場で丁寧に製造。' },
+                { icon:'🏆', title:'受賞歴あり', desc:'美容アワード受賞。' }
+              ],
+              itemFields:[{key:'icon',label:'アイコン（絵文字）',type:'text'},{key:'title',label:'見出し',type:'text'},{key:'desc',label:'説明文',type:'textarea'}] }
+          ],
+          render(d, ctx) {
+            const items = (d.features||[]).map(f => `<div class="lp-feature-scroll-card"><div class="lp-feature-scroll-icon">${esc(f.icon)}</div><h3 class="lp-feature-title">${esc(f.title)}</h3><p class="lp-feature-desc">${nl2br(f.desc)}</p></div>`).join('');
+            return `<section class="lp-features" data-variant="scroll"><div class="lp-container"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-feature-scroll">${items}</div><p class="lp-feature-scroll-hint">← 横にスクロール →</p></div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       5. 画像＋文章  A.左右交互 / B.重ね合わせ / C.カード
+       5. 画像＋文章  A.左右交互 / B.重ね合わせ / C.カード / D.ジグザグ非対称
        ============================================================ */
     {
       type: 'imageText', name: '画像＋文章', icon: '🖼️',
@@ -380,12 +462,30 @@
             const items = (d.items||[]).map(it => `<div class="lp-it-card"><div class="lp-it-card-img"><img src="${ctx.img(it.image,600,400,it.title)}" alt="${esc(it.title)}" loading="lazy"></div><div class="lp-it-card-body"><h3 class="lp-it-title">${esc(it.title)}</h3><p class="lp-it-body">${nl2br(it.body)}</p></div></div>`).join('');
             return `<section class="lp-image-text" data-variant="card"><div class="lp-container"><div class="lp-it-card-grid">${items}</div></div></section>`;
           }
+        },
+        { id: 'magazine', name: 'ジグザグ非対称（マガジン風）',
+          schema: [
+            { key: 'items', label: '画像＋文章のペア', type: 'richlist', itemDefault:{image:'',kicker:'カテゴリ',title:'見出し',body:'説明文'},
+              default:[
+                { image:'', kicker:'STORY 01', title:'始まりは、ひとつの悩みから', body:'研究開発の原点は、創業者自身の肌悩みでした。' },
+                { image:'', kicker:'STORY 02', title:'1000回の試行錯誤', body:'納得のいく処方にたどり着くまで、3年の歳月をかけました。' },
+                { image:'', kicker:'STORY 03', title:'届いたときの、あの感触', body:'お客様の手に渡った瞬間、すべての苦労が報われます。' }
+              ],
+              itemFields:[{key:'image',label:'画像',type:'image'},{key:'kicker',label:'カテゴリ表示',type:'text'},{key:'title',label:'見出し',type:'text'},{key:'body',label:'本文',type:'textarea'}] }
+          ],
+          render(d, ctx) {
+            const items = (d.items||[]).map((it,i) => {
+              const offset = i % 2 === 1 ? ' lp-it-mag-offset' : '';
+              return `<div class="lp-it-mag${offset}"><div class="lp-it-mag-img"><img src="${ctx.img(it.image,800,1000,'画像'+(i+1))}" alt="${esc(it.title)}" loading="lazy"></div><div class="lp-it-mag-text"><span class="lp-it-mag-kicker">${esc(it.kicker)}</span><h3 class="lp-it-mag-title">${esc(it.title)}</h3><p class="lp-it-body">${nl2br(it.body)}</p></div></div>`;
+            }).join('');
+            return `<section class="lp-image-text lp-it-mag-sec" data-variant="magazine"><div class="lp-container lp-narrow">${items}</div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       6. ステップ  A.漢数字丸 / B.矢印つなぎ / C.タイムライン縦
+       6. ステップ  A.漢数字丸 / B.矢印つなぎ / C.タイムライン縦 / D.大数字カード
        ============================================================ */
     {
       type: 'steps', name: 'ステップ・手順', icon: '📋',
@@ -442,12 +542,29 @@
             const steps = (d.steps||[]).map((s,i) => `<div class="lp-step-tl"><div class="lp-step-tl-dot"></div><div class="lp-step-tl-body"><span class="lp-step-tl-n">STEP ${i+1}</span><h3 class="lp-step-title">${esc(s.title)}</h3><p class="lp-step-desc">${nl2br(s.desc)}</p></div></div>`).join('');
             return `<section class="lp-steps" data-variant="timeline"><div class="lp-container lp-narrow"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-step-tl-list">${steps}</div></div></section>`;
           }
+        },
+        { id: 'bignum', name: '大数字カード（番号主役）',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: 'HOW TO' },
+            { key: 'title', label: '見出し', type: 'text', default: '3ステップで完了' },
+            { key: 'steps', label: 'ステップ', type: 'richlist', itemDefault:{title:'ステップ',desc:'説明文'},
+              default:[
+                { title:'選ぶ', desc:'お好きなコースを選択' },
+                { title:'注文', desc:'必要事項を入力して決済' },
+                { title:'届く', desc:'2〜4日でお届け' }
+              ],
+              itemFields:[{key:'title',label:'見出し',type:'text'},{key:'desc',label:'説明文',type:'textarea'}] }
+          ],
+          render(d, ctx) {
+            const steps = (d.steps||[]).map((s,i) => `<div class="lp-step-bignum"><div class="lp-step-bignum-n">${String(i+1).padStart(2,'0')}</div><h3 class="lp-step-bignum-title">${esc(s.title)}</h3><p class="lp-step-desc">${nl2br(s.desc)}</p></div>`).join('');
+            return `<section class="lp-steps" data-variant="bignum"><div class="lp-container"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-step-bignum-grid">${steps}</div></div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       7. 比較表  A.ハイライト列 / B.チェックバツ / C.カード比較
+       7. 比較表  A.ハイライト列 / B.チェックバツ / C.カード比較 / D.VS対戦型
        ============================================================ */
     {
       type: 'compare', name: '比較表', icon: '⚖️',
@@ -513,12 +630,33 @@
             const otherItems = (d.rows||[]).map(r => `<li><span class="lp-cmp-card-k">${esc(r.label)}</span><span class="lp-cmp-card-v">${esc(r.other)}</span></li>`).join('');
             return `<section class="lp-compare" data-variant="cards"><div class="lp-container"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-cmp-cards"><div class="lp-cmp-card lp-cmp-card-other"><h3 class="lp-cmp-card-name">${esc(d.otherLabel)}</h3><ul>${otherItems}</ul></div><div class="lp-cmp-card lp-cmp-card-us"><div class="lp-cmp-card-badge">おすすめ</div><h3 class="lp-cmp-card-name">${esc(d.usLabel)}</h3><ul>${usItems}</ul></div></div></div></section>`;
           }
+        },
+        { id: 'vs', name: 'VS対戦型（2者対決）',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: 'COMPARISON' },
+            { key: 'title', label: '見出し', type: 'text', default: '本商品 vs 従来品' },
+            { key: 'usLabel', label: '自社ラベル', type: 'text', default: '本商品' },
+            { key: 'otherLabel', label: '比較ラベル', type: 'text', default: '従来品' },
+            { key: 'usEmoji', label: '自社アイコン', type: 'text', default: '🏆' },
+            { key: 'otherEmoji', label: '比較アイコン', type: 'text', default: '📦' },
+            { key: 'rows', label: '比較項目', type: 'richlist', itemDefault:{label:'項目',us:'○',other:'×'},
+              default:[
+                { label:'成分の種類', us:'5種類', other:'1種類' },
+                { label:'無添加', us:'○', other:'×' },
+                { label:'返金保証', us:'30日間', other:'なし' }
+              ],
+              itemFields:[{key:'label',label:'項目',type:'text'},{key:'us',label:'自社の値',type:'text'},{key:'other',label:'比較の値',type:'text'}] }
+          ],
+          render(d, ctx) {
+            const rows = (d.rows||[]).map(r => `<div class="lp-cmp-vs-row"><div class="lp-cmp-vs-other">${esc(r.other)}</div><div class="lp-cmp-vs-label">${esc(r.label)}</div><div class="lp-cmp-vs-us">${esc(r.us)}</div></div>`).join('');
+            return `<section class="lp-compare lp-compare-vs" data-variant="vs"><div class="lp-container lp-narrow"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-cmp-vs-headers"><div class="lp-cmp-vs-h-other"><span class="lp-cmp-vs-emoji">${esc(d.otherEmoji)}</span>${esc(d.otherLabel)}</div><div class="lp-cmp-vs-h-us"><span class="lp-cmp-vs-emoji">${esc(d.usEmoji)}</span>${esc(d.usLabel)}</div></div><div class="lp-cmp-vs-rows">${rows}</div></div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       8. 仕様スペック表  A.zebra / B.枠囲み / C.2カラム
+       8. 仕様スペック表  A.zebra / B.枠囲み / C.2カラム / D.アイコングリッド
        ============================================================ */
     {
       type: 'spec', name: '仕様スペック表', icon: '🔩',
@@ -568,12 +706,32 @@
             const rows = (d.rows||[]).map(r => `<div class="lp-spec-2c-item"><div class="lp-spec-2c-k">${esc(r.label)}</div><div class="lp-spec-2c-v">${esc(r.value)}</div></div>`).join('');
             return `<section class="lp-spec lp-spec-2col" data-variant="twocol"><div class="lp-container lp-narrow"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-spec-2c-grid">${rows}</div></div></section>`;
           }
+        },
+        { id: 'icons', name: 'アイコングリッド（ピクトグラム）',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: 'SPECIFICATION' },
+            { key: 'title', label: '見出し', type: 'text', default: '商品のポイント' },
+            { key: 'rows', label: '仕様項目', type: 'richlist', itemDefault:{icon:'🌿',label:'項目',value:'値'},
+              default:[
+                { icon:'🌿', label:'原料', value:'植物由来' },
+                { icon:'🏭', label:'生産国', value:'日本' },
+                { icon:'📏', label:'内容量', value:'50mL' },
+                { icon:'🚚', label:'配送', value:'送料無料' },
+                { icon:'♻️', label:'容器', value:'リサイクル可' },
+                { icon:'🔒', label:'品質', value:'GMP認証' }
+              ],
+              itemFields:[{key:'icon',label:'アイコン（絵文字）',type:'text'},{key:'label',label:'項目名',type:'text'},{key:'value',label:'値',type:'text'}] }
+          ],
+          render(d, ctx) {
+            const items = (d.rows||[]).map(r => `<div class="lp-spec-ic"><div class="lp-spec-ic-icon">${esc(r.icon)}</div><div class="lp-spec-ic-label">${esc(r.label)}</div><div class="lp-spec-ic-value">${esc(r.value)}</div></div>`).join('');
+            return `<section class="lp-spec lp-spec-icons" data-variant="icons"><div class="lp-container"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-spec-ic-grid">${items}</div></div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       9. 価格表  A.3カラム / B.リスト型(縦) / C.強調1プラン
+       9. 価格表  A.3カラム / B.リスト型(縦) / C.強調1プラン / D.トグル切替
        ============================================================ */
     {
       type: 'pricing', name: '価格表（税込）', icon: '💰',
@@ -636,12 +794,30 @@
             const oldP = d.oldPrice ? `<span class="lp-plan-old">${ctx.formatPrice(d.oldPrice)}</span>` : '';
             return `<section class="lp-pricing lp-pricing-single" data-variant="single" id="cta"><div class="lp-container lp-narrow"><div class="lp-plan-single"><div class="lp-plan-single-info"><p class="lp-eyebrow">${esc(d.eyebrow||'PRICE')}</p><h3 class="lp-plan-name">${esc(d.name)}</h3><div class="lp-plan-price">${oldP}${ctx.formatPrice(d.price)}<span class="lp-plan-period">${esc(d.period||'')}</span></div><ul class="lp-plan-features lp-plan-features-2col">${feats}</ul></div><div class="lp-plan-single-cta"><a class="lp-btn lp-btn-primary lp-btn-lg" href="${esc(d.ctaUrl||'#cta')}">${esc(d.ctaText)}</a>${d.note?`<p class="lp-pricing-note">${esc(d.note)}</p>`:''}</div></div></div></section>`;
           }
+        },
+        { id: 'toggle', name: 'トグル切替（定期/単品）',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: 'PRICE' },
+            { key: 'title', label: '見出し', type: 'text', default: 'お得なコース' },
+            { key: 'name', label: 'プラン名', type: 'text', default: 'ベーシックコース' },
+            { key: 'regularPrice', label: '定期価格（数値）', type: 'number', default: 4980 },
+            { key: 'regularPeriod', label: '定期の注記', type: 'text', default: '（税込／2個セット・毎月お届け）' },
+            { key: 'singlePrice', label: '単品価格（数値）', type: 'number', default: 3278 },
+            { key: 'singlePeriod', label: '単品の注記', type: 'text', default: '（税込／1回限り）' },
+            { key: 'features', label: '特徴（1行1つ）', type: 'textarea', default:'送料無料\nいつでも解約OK\n10%OFFクーポン' },
+            { key: 'ctaText', label: 'ボタン文言', type: 'text', default: '購入する' },
+            { key: 'ctaUrl', label: 'リンク先', type: 'url', default: '#cta' }
+          ],
+          render(d, ctx) {
+            const feats = (d.features||'').split('\n').map(f => f.trim()).filter(Boolean).map(f => `<li>${esc(f)}</li>`).join('');
+            return `<section class="lp-pricing lp-pricing-toggle" data-variant="toggle" id="cta"><div class="lp-container lp-narrow"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-plan-toggle-card"><div class="lp-plan-toggle-switch"><label class="lp-toggle-opt"><input type="radio" name="pg" checked><span>定期便</span></label><label class="lp-toggle-opt"><input type="radio" name="pg"><span>単品</span></label><div class="lp-toggle-slider"></div></div><h3 class="lp-plan-name">${esc(d.name)}</h3><div class="lp-plan-toggle-prices"><span class="lp-plan-toggle-price lp-plan-toggle-regular">${ctx.formatPrice(d.regularPrice)}<small>${esc(d.regularPeriod||'')}</small></span><span class="lp-plan-toggle-price lp-plan-toggle-single">${ctx.formatPrice(d.singlePrice)}<small>${esc(d.singlePeriod||'')}</small></span></div><ul class="lp-plan-features lp-center">${feats}</ul><a class="lp-btn lp-btn-primary lp-btn-lg lp-btn-block" href="${esc(d.ctaUrl||'#cta')}">${esc(d.ctaText)}</a><p class="lp-pricing-note">※ 表示価格はすべて消費税込です。</p></div></div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       10. ギャラリー  A.等サイズグリッド / B.大小ミックス / C.スライダー風
+       10. ギャラリー  A.等サイズグリッド / B.大小ミックス / C.スライダー風 / D.ビフォーアフター
        ============================================================ */
     {
       type: 'gallery', name: 'ギャラリー', icon: '🖼️',
@@ -686,12 +862,26 @@
             const items = (d.images||[]).map(im => `<figure class="lp-gallery-scroll-item"><img src="${ctx.img(im.image,500,500,'ギャラリー')}" alt="${esc(im.caption||'')}" loading="lazy">${im.caption?`<figcaption>${esc(im.caption)}</figcaption>`:''}</figure>`).join('');
             return `<section class="lp-gallery" data-variant="scroll"><div class="lp-container"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-gallery-scroll">${items}</div><p class="lp-gallery-scroll-hint">← 横にスクロール →</p></div></section>`;
           }
+        },
+        { id: 'ba', name: 'ビフォーアフター（比較スライダー）',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: 'BEFORE / AFTER' },
+            { key: 'title', label: '見出し', type: 'text', default: '使い続けて、この違い' },
+            { key: 'beforeImage', label: 'ビフォー画像', type: 'image', default: '' },
+            { key: 'afterImage', label: 'アフター画像', type: 'image', default: '' },
+            { key: 'beforeLabel', label: 'ビフォーラベル', type: 'text', default: '使用前' },
+            { key: 'afterLabel', label: 'アフターラベル', type: 'text', default: '4週間後' },
+            { key: 'caption', label: 'キャプション', type: 'text', default: '← ドラッグで比較 →' }
+          ],
+          render(d, ctx) {
+            return `<section class="lp-gallery lp-gallery-ba" data-variant="ba"><div class="lp-container lp-narrow"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-ba"><div class="lp-ba-img lp-ba-after"><img src="${ctx.img(d.afterImage,800,500,'アフター')}" alt="${esc(d.afterLabel)}"><span class="lp-ba-tag">${esc(d.afterLabel)}</span></div><div class="lp-ba-img lp-ba-before"><img src="${ctx.img(d.beforeImage,800,500,'ビフォー')}" alt="${esc(d.beforeLabel)}"><span class="lp-ba-tag">${esc(d.beforeLabel)}</span></div><div class="lp-ba-handle"><span>⇆</span></div></div>${d.caption?`<p class="lp-ba-caption">${esc(d.caption)}</p>`:''}</div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       11. お客様の声  A.3カラム / B.1件大きく / C.平均+引用
+       11. お客様の声  A.3カラム / B.1件大きく / C.平均+引用 / D.画像付きカード
        ============================================================ */
     {
       type: 'reviews', name: 'お客様の声（星評価）', icon: '⭐',
@@ -750,12 +940,29 @@
             const quotes = (d.reviews||[]).map(r => `<figure class="lp-review-quote"><blockquote>"${esc(r.body)}"</blockquote><figcaption>${esc(r.name)}</figcaption></figure>`).join('');
             return `<section class="lp-reviews lp-reviews-avg" data-variant="avg"><div class="lp-container"><div class="lp-reviews-avg-hero"><div class="lp-reviews-avg-big">${esc(d.avgRating)}</div><div><div class="lp-reviews-avg-stars">${stars(d.avgRating)}</div><p class="lp-reviews-avg-label">${esc(d.avgLabel||'')}</p></div></div><div class="lp-review-quote-grid">${quotes}</div></div></section>`;
           }
+        },
+        { id: 'photo', name: '画像付きカード（お客様写真）',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: 'REVIEWS' },
+            { key: 'title', label: '見出し', type: 'text', default: 'ご利用者様の声' },
+            { key: 'reviews', label: 'レビュー', type: 'richlist', itemDefault:{image:'',name:'お名前',rating:5,body:'感想'},
+              default:[
+                { image:'', name:'M.K様', rating:5, body:'肌の調子が明らかに良くなりました！' },
+                { image:'', name:'T.S様', rating:5, body:'使い続けて3ヶ月。手放せません。' },
+                { image:'', name:'R.Y様', rating:4, body:'無添加で安心して使えています。' }
+              ],
+              itemFields:[{key:'image',label:'お客様の写真',type:'image'},{key:'name',label:'お名前',type:'text'},{key:'rating',label:'評価（1〜5）',type:'number'},{key:'body',label:'本文',type:'textarea'}] }
+          ],
+          render(d, ctx) {
+            const items = (d.reviews||[]).map(r => `<div class="lp-review-photo"><div class="lp-review-photo-img"><img src="${ctx.img(r.image,200,200,r.name)}" alt="${esc(r.name)}"></div><div class="lp-review-photo-body"><div class="lp-review-stars">${stars(r.rating)}</div><p class="lp-review-body">${nl2br(r.body)}</p><p class="lp-review-meta">${esc(r.name)} 様</p></div></div>`).join('');
+            return `<section class="lp-reviews lp-reviews-photo" data-variant="photo"><div class="lp-container"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-review-photo-grid">${items}</div></div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       12. FAQ  A.アコーディオン / B.2カラム / C.展開リスト
+       12. FAQ  A.アコーディオン / B.2カラム / C.展開リスト / D.検索+カテゴリ
        ============================================================ */
     {
       type: 'faq', name: 'よくある質問', icon: '❓',
@@ -814,12 +1021,34 @@
             const items = (d.faqs||[]).map((f,i) => `<details class="lp-faq-item lp-faq-list2"${i===0?' open':''}><summary class="lp-faq-q lp-faq-list2-q"><span>${esc(f.q)}</span></summary><div class="lp-faq-a">${nl2br(f.a)}</div></details>`).join('');
             return `<section class="lp-faq lp-faq-list2-sec" data-variant="list"><div class="lp-container lp-narrow"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-faq-list">${items}</div></div></section>`;
           }
+        },
+        { id: 'search', name: '検索＋カテゴリタブ',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: 'FAQ' },
+            { key: 'title', label: '見出し', type: 'text', default: 'よくあるご質問' },
+            { key: 'placeholder', label: '検索プレースホルダー', type: 'text', default: '気になるキーワードで検索...' },
+            { key: 'faqs', label: 'Q&A', type: 'richlist', itemDefault:{category:'商品について',q:'質問',a:'回答'},
+              default:[
+                { category:'商品について', q:'敏感肌でも使えますか？', a:'低刺激処方ですが、合わない場合はご利用を中止してください。' },
+                { category:'商品について', q:'成分表はどこで見れますか？', a:'商品ページの成分タブをご覧ください。' },
+                { category:'配送・支払い', q:'送料はいくらですか？', a:'全国どこでも送料無料です。' },
+                { category:'配送・支払い', q:'支払い方法は？', a:'クレジットカード・代引き・コンビニ決済に対応。' },
+                { category:'返品・交換', q:'返品はできますか？', a:'商品到着後7日以内にご連絡ください。' }
+              ],
+              itemFields:[{key:'category',label:'カテゴリ',type:'text'},{key:'q',label:'質問',type:'text'},{key:'a',label:'回答',type:'textarea'}] }
+          ],
+          render(d, ctx) {
+            const cats = [...new Set((d.faqs||[]).map(f => f.category))];
+            const tabBtns = cats.map((c,i) => `<button class="lp-faq-cat-btn${i===0?' active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+            const items = (d.faqs||[]).map(f => `<details class="lp-faq-item lp-faq-search-item" data-cat="${esc(f.category)}"><summary class="lp-faq-q"><span class="lp-faq-mark">Q.</span>${esc(f.q)}</summary><div class="lp-faq-a"><span class="lp-faq-mark lp-faq-mark-a">A.</span>${nl2br(f.a)}</div></details>`).join('');
+            return `<section class="lp-faq lp-faq-search-sec" data-variant="search"><div class="lp-container lp-narrow"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-faq-search-box"><input type="text" class="lp-faq-search-input" placeholder="${esc(d.placeholder)}" oninput="void(0)">🔍</div><div class="lp-faq-cats">${tabBtns}</div><div class="lp-faq-list">${items}</div></div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       13. 動画  A.16:9 / B.正方形/円形 / C.全幅
+       13. 動画  A.16:9 / B.正方形/円形 / C.全幅 / D.説明付き
        ============================================================ */
     {
       type: 'video', name: '動画', icon: '🎬',
@@ -870,12 +1099,29 @@
             else media = `<div class="lp-video-frame lp-video-full"><video controls playsinline><source src="${esc(d.mp4Url)}" type="video/mp4"></video></div>`;
             return `<section class="lp-video-sec lp-video-full-sec" data-variant="full"><div class="lp-section-head lp-center" style="padding:0 20px">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div>${media}</section>`;
           }
+        },
+        { id: 'explain', name: '説明付き（動画＋テキスト）',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: 'MOVIE' },
+            { key: 'title', label: '見出し', type: 'text', default: '商品紹介動画' },
+            { key: 'videoType', label: '動画の種類', type: 'select', default: 'youtube', options:[{v:'youtube',l:'YouTube'},{v:'mp4',l:'MP4 (直リンク)'}] },
+            { key: 'youtubeId', label: 'YouTube 動画ID', type: 'text', default: 'dQw4w9WgXcQ' },
+            { key: 'mp4Url', label: 'MP4 URL', type: 'url', default: '' },
+            { key: 'points', label: 'ポイント（1行1つ: 時間|内容）', type: 'textarea', default:'0:00|商品の全体像\n0:30|テクスチャの紹介\n1:00|実際の使用シーン\n1:30|使い方のコツ' }
+          ],
+          render(d, ctx) {
+            let media = '';
+            if (d.videoType === 'youtube' && d.youtubeId) media = `<div class="lp-video-frame"><iframe src="https://www.youtube-nocookie.com/embed/${esc(d.youtubeId)}" title="${esc(d.title)}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+            else media = `<div class="lp-video-frame"><video controls playsinline><source src="${esc(d.mp4Url)}" type="video/mp4"></video></div>`;
+            const points = (d.points||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l => { const [t,c]=l.split('|'); return `<li class="lp-video-point"><span class="lp-video-point-time">${esc((t||'').trim())}</span><span class="lp-video-point-content">${esc((c||'').trim())}</span></li>`; }).join('');
+            return `<section class="lp-video-sec lp-video-explain" data-variant="explain"><div class="lp-container"><div class="lp-section-head lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2></div><div class="lp-video-explain-row"><div class="lp-video-explain-video">${media}</div><div class="lp-video-explain-points"><h3 class="lp-video-explain-title">動画のポイント</h3><ul>${points}</ul></div></div></div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       14. カウントダウン  A.4分割 / B.バー型 / C.円形
+       14. カウントダウン  A.4分割 / B.バー型 / C.円形 / D.緊急感（大型）
        ============================================================ */
     {
       type: 'countdown', name: 'カウントダウンタイマー', icon: '⏰',
@@ -916,12 +1162,24 @@
           render(d, ctx) {
             return `<section class="lp-countdown lp-countdown-circles" data-variant="circles"><div class="lp-container lp-center">${d.eyebrow?`<p class="lp-eyebrow">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2">${esc(d.title)}</h2><div class="lp-cd lp-cd-circles" data-deadline="${esc(d.deadline||'')}"><div class="lp-cd-circle"><span class="lp-cd-num" data-cd="d">--</span><span class="lp-cd-lbl">DAYS</span></div><div class="lp-cd-circle"><span class="lp-cd-num" data-cd="h">--</span><span class="lp-cd-lbl">HRS</span></div><div class="lp-cd-circle"><span class="lp-cd-num" data-cd="m">--</span><span class="lp-cd-lbl">MIN</span></div><div class="lp-cd-circle"><span class="lp-cd-num" data-cd="s">--</span><span class="lp-cd-lbl">SEC</span></div></div>${d.ctaText?`<a class="lp-btn lp-btn-white lp-btn-lg" href="${esc(d.ctaUrl||'#cta')}">${esc(d.ctaText)}</a>`:''}</div></section>`;
           }
+        },
+        { id: 'urgent', name: '緊急感（数字超大型）',
+          schema: [
+            { key: 'eyebrow', label: '小見出し', type: 'text', default: '⚠️ LAST CHANCE' },
+            { key: 'title', label: '見出し', type: 'text', default: '残り時間' },
+            { key: 'deadline', label: '終了日時', type: 'text', default: '', hint:'YYYY-MM-DDTHH:MM' },
+            { key: 'ctaText', label: 'ボタン文言', type: 'text', default: '今すぐ購入する' },
+            { key: 'ctaUrl', label: 'リンク先', type: 'url', default: '#cta' }
+          ],
+          render(d, ctx) {
+            return `<section class="lp-countdown lp-countdown-urgent" data-variant="urgent"><div class="lp-container lp-center">${d.eyebrow?`<p class="lp-eyebrow lp-cd-urgent-eb">${esc(d.eyebrow)}</p>`:''}<h2 class="lp-h2 lp-cd-urgent-title">${esc(d.title)}</h2><div class="lp-cd lp-cd-urgent" data-deadline="${esc(d.deadline||'')}"><span class="lp-cd-num lp-cd-urgent-num" data-cd="h">--</span><span class="lp-cd-urgent-colon">:</span><span class="lp-cd-num lp-cd-urgent-num" data-cd="m">--</span><span class="lp-cd-urgent-colon">:</span><span class="lp-cd-num lp-cd-urgent-num" data-cd="s">--</span></div>${d.ctaText?`<a class="lp-btn lp-btn-white lp-btn-lg lp-cd-urgent-btn" href="${esc(d.ctaUrl||'#cta')}">${esc(d.ctaText)}</a>`:''}</div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       15. CTA  A.帯 / B.カード / C.分割
+       15. CTA  A.帯 / B.カード / C.分割 / D.スティッキー（追従）
        ============================================================ */
     {
       type: 'cta', name: 'CTA（申込）', icon: '🔔',
@@ -967,12 +1225,27 @@
           render(d, ctx) {
             return `<section class="lp-cta lp-cta-split" data-variant="split" style="background:${esc(d.bg)};color:${esc(d.fg)}"><div class="lp-container lp-cta-split-row"><div class="lp-cta-split-text"><h2 class="lp-cta-title">${esc(d.title)}</h2>${d.subtitle?`<p class="lp-cta-sub">${nl2br(d.subtitle)}</p>`:''}${d.ctaText?`<div class="lp-cta-btn"><a class="lp-btn lp-btn-white lp-btn-lg" href="${esc(d.ctaUrl||'#cta')}">${esc(d.ctaText)}</a></div>`:''}</div><div class="lp-cta-split-img"><img src="${ctx.img(d.image,700,700,'CTA画像')}" alt=""></div></div></section>`;
           }
+        },
+        { id: 'sticky', name: 'スティッキー（追従フッター型）',
+          schema: [
+            { key: 'title', label: '見出し（短め推奨）', type: 'text', default: '今だけ送料無料！' },
+            { key: 'price', label: '価格（数値）', type: 'number', default: 3278 },
+            { key: 'oldPrice', label: '通常価格（任意）', type: 'number', default: 4980 },
+            { key: 'ctaText', label: 'ボタン文言', type: 'text', default: '今すぐ購入' },
+            { key: 'ctaUrl', label: 'リンク先', type: 'url', default: '#cta' },
+            { key: 'bg', label: '背景色', type: 'color', default: '#e87a8b' },
+            { key: 'fg', label: '文字色', type: 'color', default: '#ffffff' }
+          ],
+          render(d, ctx) {
+            const old = d.oldPrice ? `<span class="lp-cta-sticky-old">${ctx.formatPrice(d.oldPrice)}</span>` : '';
+            return `<section class="lp-cta lp-cta-sticky" data-variant="sticky" style="background:${esc(d.bg)};color:${esc(d.fg)}"><div class="lp-container lp-cta-sticky-inner"><div class="lp-cta-sticky-text"><span class="lp-cta-sticky-title">${esc(d.title)}</span><span class="lp-cta-sticky-price">${old}${ctx.formatPrice(d.price)}<small>（税込）</small></span></div><a class="lp-btn lp-btn-white lp-cta-sticky-btn" href="${esc(d.ctaUrl||'#cta')}">${esc(d.ctaText)}</a></div></section>`;
+          }
         }
       ]
     },
 
     /* ============================================================
-       16. フッター  A.標準 / B.4カラム / C.ミニマル
+       16. フッター  A.標準 / B.4カラム / C.ミニマル / D.ニュースレター
        ============================================================ */
     {
       type: 'footer', name: 'フッター（会社情報）', icon: '🏷️',
@@ -1017,6 +1290,24 @@
           render(d, ctx) {
             const links = (d.links||'').split('\n').map(l => l.trim()).filter(Boolean).map(l => { const [name,url]=l.split('|'); return `<a href="${esc((url||'#').trim())}">${esc((name||'').trim())}</a>`; }).join('<span class="lp-foot-sep">・</span>');
             return `<footer class="lp-footer lp-footer-minimal" data-variant="minimal"><div class="lp-container lp-center"><div class="lp-foot-shop">${esc(d.shopName)}</div>${links?`<nav class="lp-foot-links">${links}</nav>`:''}<div class="lp-foot-copy">${esc(d.copyright)}</div></div></footer>`;
+          }
+        },
+        { id: 'newsletter', name: 'ニュースレター（登録付き）',
+          schema: [
+            { key: 'shopName', label: 'ショップ名', type: 'text', default: '〇〇ストア' },
+            { key: 'title', label: '見出し', type: 'text', default: 'お得な情報をメルマガで' },
+            { key: 'subtitle', label: 'サブテキスト', type: 'textarea', default: '新商品情報・限定クーポンをお届け。\n登録で今すぐ500円OFFクーポンプレゼント！' },
+            { key: 'placeholder', label: '入力欄プレースホルダー', type: 'text', default: 'メールアドレス' },
+            { key: 'ctaText', label: 'ボタン文言', type: 'text', default: '登録する' },
+            { key: 'note', label: '注記', type: 'text', default: '※ いつでも解除できます' },
+            { key: 'links', label: 'リンク（1行1つ: 表示名|URL）', type: 'textarea', default:'特定商取引法に基づく表記|/pages/tokushoho\nプライバシー|/pages/privacy\n利用規約|/pages/terms' },
+            { key: 'copyright', label: 'コピーライト', type: 'text', default: '© 2026 〇〇ストア' },
+            { key: 'bg', label: '背景色', type: 'color', default: '#1f3a5f' },
+            { key: 'fg', label: '文字色', type: 'color', default: '#ffffff' }
+          ],
+          render(d, ctx) {
+            const links = (d.links||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l => { const [n,u]=l.split('|'); return `<a href="${esc((u||'#').trim())}">${esc((n||'').trim())}</a>`; }).join('<span class="lp-foot-sep">・</span>');
+            return `<footer class="lp-footer lp-footer-newsletter" data-variant="newsletter" style="background:${esc(d.bg)};color:${esc(d.fg)}"><div class="lp-container"><div class="lp-nl-hero"><div class="lp-nl-shop">${esc(d.shopName)}</div><h3 class="lp-nl-title">${esc(d.title)}</h3><p class="lp-nl-sub">${nl2br(d.subtitle)}</p><form class="lp-nl-form" onsubmit="void(0)"><input type="email" class="lp-nl-input" placeholder="${esc(d.placeholder)}"><button type="button" class="lp-btn lp-btn-white">${esc(d.ctaText)}</button></form>${d.note?`<p class="lp-nl-note">${esc(d.note)}</p>`:''}</div>${links?`<nav class="lp-foot-links lp-nl-links">${links}</nav>`:''}<div class="lp-foot-copy">${esc(d.copyright)}</div></div></footer>`;
           }
         }
       ]

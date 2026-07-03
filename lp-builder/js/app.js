@@ -224,6 +224,18 @@
     });
   }
 
+  // ============ 全体表示（ミニマップ）トグル ============
+  function setupOverviewToggle() {
+    const btn = $('#btn-overview');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const on = !btn.classList.contains('active');
+      btn.classList.toggle('active', on);
+      LP.Preview.setOverview(on);
+      flashStatus(on ? '全体表示モード: LP全体を俯瞰中' : '通常表示に戻しました');
+    });
+  }
+
   // ============ トップバー ボタン ============
   function setupTopbar() {
     $('#btn-undo').addEventListener('click', () => { LP.State.undo(); flashStatus('元に戻しました'); });
@@ -332,10 +344,12 @@
       // ただしリピータ追加/削除/移動時は再描画が必要
       refreshInspectorIfNeeded();
     });
-    LP.State.on('selection', () => {
+    LP.State.on('selection', (id) => {
       refreshInspector();
       // 選択ハイライト更新のため再描画
       scheduleRender(true);
+      // 選択モジュールへスクロール（プレビュー内）
+      if (id) setTimeout(() => LP.Preview.scrollToModule(id), 80);
     });
     LP.State.on('renamed', (name) => {
       $('#project-name-label').textContent = name || '無題のプロジェクト';
@@ -374,6 +388,7 @@
       buildTemplateList();
       setupTabs();
       setupDeviceToggle();
+      setupOverviewToggle();
       setupTopbar();
       setupProjectPanel();
       setupTemplateFilter();

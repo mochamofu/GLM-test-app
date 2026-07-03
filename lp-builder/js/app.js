@@ -92,14 +92,15 @@
     proj.theme = tpl.theme();
     proj.name = tpl.name + ' のLP';
     proj.title = tpl.name;
-    // テンプレ構成を読込
+    // テンプレ構成を読込（各モジュールは先頭バリアントを使用）
     tpl.structure().forEach(type => {
       const def = LP.Modules.get(type);
       if (!def) return;
+      const variant = def.variants[0];
       proj.modules.push({
         id: LP.State.genId(type),
         type: type,
-        data: LP.Modules.defaultData(def.schema)
+        data: Object.assign({ variantId: variant.id }, LP.Modules.defaultData(variant.schema))
       });
     });
     LP.State.replaceProject(proj);

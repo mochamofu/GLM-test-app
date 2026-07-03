@@ -27,8 +27,12 @@
       this.empty.classList.add('hidden');
       this.container.classList.remove('hidden');
 
-      const def = LP.Modules.get(mod.type);
-      if (!def) return;
+      const moduleDef = LP.Modules.get(mod.type);
+      const def = LP.Modules.getDefForModule(mod);
+      if (!moduleDef || !def) return;
+
+      // 現在のバリアント
+      const currentVid = mod.data.variantId || (moduleDef.variants[0] && moduleDef.variants[0].id);
 
       // ヘッダ: アイコン・名前・上下移動・複製・削除
       const head = `
@@ -41,11 +45,30 @@
           <button class="icon-btn danger" data-act="del" title="削除">🗑</button>
         </div>`;
 
+      // バリアント切替UI（2種以上ある場合のみ表示）
+      let variantBar = '';
+      if (moduleDef.variants.length > 1) {
+        const btns = moduleDef.variants.map(v => {
+          const active = v.id === currentVid ? ' active' : '';
+          return `<button class="variant-btn${active}" data-vid="${v.id}" title="${escapeHTML(v.name)}">${escapeHTML(v.name)}</button>`;
+        }).join('');
+        variantBar = `<div class="variant-bar"><span class="variant-bar-label">デザイン</span><div class="variant-btns">${btns}</div></div>`;
+      }
+
       // スキーマからフィールド生成
       const fields = def.schema.map(f => this._renderField(mod, f)).join('');
 
-      this.container.innerHTML = head + fields;
+      this.container.innerHTML = head + variantBar + fields;
       this._bindHead(mod.id);
+      this._bindVariants(mod.id);
+    },
+
+    _bindVariants(id) {
+      this.container.querySelectorAll('[data-vid]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          LP.State.switchVariant(id, btn.getAttribute('data-vid'));
+        });
+      });
     },
 
     _bindHead(id) {
@@ -196,7 +219,9 @@
         const act = btn.getAttribute('data-act');
         const fkey = btn.getAttribute('data-fkey');
         if (act === 'radd') {
-          const f = LP.Modules.get(LP.State.getSelected().type).schema.find(x => x.key === fkey);
+          const sel = LP.State.getSelected();
+          const def = LP.Modules.getDefForModule(sel);
+          const f = def.schema.find(x => x.key === fkey);
           const item = Object.assign({}, f.itemDefault || {});
           LP.State.addRepeaterItem(this._currentId, fkey, item);
         } else if (act === 'rdel') {

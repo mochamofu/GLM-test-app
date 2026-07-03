@@ -51,7 +51,7 @@
     opts = opts || {};
     const ctx = LP.buildCtx(project.theme);
     return project.modules.map(mod => {
-      const def = LP.Modules.get(mod.type);
+      const def = LP.Modules.getDefForModule(mod);
       if (!def) return '';
       let html;
       try { html = def.render(mod.data, ctx); } catch (e) {

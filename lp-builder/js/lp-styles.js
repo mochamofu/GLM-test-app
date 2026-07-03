@@ -267,6 +267,197 @@
 .lp-foot-copy { padding-top: 16px; border-top: 1px solid var(--lp-line); font-size: 12px; }
 
 /* =========================================================
+   バリアント別スタイル（各モジュールの2-3種類目以降）
+   ========================================================= */
+
+/* --- お知らせバー: マーキー / バナー --- */
+.lp-notice-marquee { overflow: hidden; padding: 0; }
+.lp-notice-marquee a { display: block; padding: 10px 0; }
+.lp-notice-marquee-track { display: inline-block; white-space: nowrap; animation: lp-marquee 18s linear infinite; padding-left: 100%; }
+.lp-notice-marquee .nt-sep { margin: 0 14px; opacity: .6; }
+@keyframes lp-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+.lp-notice-banner { border-radius: 0; }
+.lp-notice-banner a, .lp-notice-banner > span { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.lp-notice-banner .nt-btn {
+  background: rgba(255,255,255,.22); padding: 4px 14px; border-radius: 20px; font-size: 12px;
+}
+
+/* --- ヒーロー: 分割 / 中央 --- */
+.lp-hero-split { padding: 0; min-height: auto; }
+.lp-hero-split-row { display: grid; grid-template-columns: 1fr 1fr; align-items: center; min-height: 480px; }
+.lp-hero-split-img img { width: 100%; height: 100%; min-height: 480px; object-fit: cover; }
+.lp-hero-split-text { padding: 40px; }
+.lp-hero-split .lp-hero-title { font-size: clamp(24px, 3.4vw, 36px); text-shadow: none; }
+.lp-hero-center { padding: 80px 0; }
+.lp-hero-title-center { font-size: clamp(26px, 4.5vw, 40px); }
+
+/* --- リード文: 左寄せ / 引用 --- */
+.lp-lead-left .lp-lead-left-eyebrow { font-size: 13px; font-weight: 700; color: var(--lp-primary); letter-spacing: .08em; margin-bottom: 8px; }
+.lp-lead-left .lp-lead-left-title { font-size: clamp(22px, 3.6vw, 30px); font-weight: 800; border-left: 4px solid var(--lp-primary); padding-left: 16px; margin-bottom: 20px; line-height: 1.4; }
+.lp-lead-left .lp-lead-body { font-size: 16px; }
+.lp-lead-quote { padding: 56px 0; }
+.lp-quote { font-size: clamp(20px, 3vw, 28px); font-weight: 700; line-height: 1.6; margin: 0 0 16px; color: var(--lp-text); quotes: none; }
+.lp-quote::before { content: '\\201C'; font-size: 1.4em; color: var(--lp-primary); line-height: 0; vertical-align: -.3em; margin-right: 4px; }
+.lp-quote::after { content: '\\201D'; font-size: 1.4em; color: var(--lp-primary); line-height: 0; vertical-align: -.3em; margin-left: 2px; }
+.lp-quote-cite { font-style: normal; font-size: 14px; color: var(--lp-muted); }
+
+/* --- メリット: カード / 番号付き --- */
+.lp-feature-grid-card { gap: 22px; }
+.lp-feature-card { background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.04); }
+.lp-feature-card-img img { width: 100%; aspect-ratio: 3/2; object-fit: cover; }
+.lp-feature-card-body { padding: 18px; }
+.lp-feature-card-body .lp-feature-title { font-size: 17px; }
+.lp-feature-num-list { display: flex; flex-direction: column; gap: 20px; }
+.lp-feature-num { display: flex; gap: 18px; align-items: flex-start; background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); padding: 22px; }
+.lp-feature-num-n { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; background: var(--lp-primary); color: #fff; font-size: 20px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+/* --- 画像＋文章: 重ね合わせ / カード --- */
+.lp-it-overlap { position: relative; margin-bottom: 56px; }
+.lp-it-overlap-img img { width: 100%; aspect-ratio: 2/1; object-fit: cover; border-radius: var(--lp-radius); }
+.lp-it-overlap-card { background: #fff; margin: -40px auto 0; max-width: 80%; position: relative; padding: 24px; border-radius: var(--lp-radius); box-shadow: 0 8px 24px rgba(0,0,0,.08); border: 1px solid var(--lp-line); }
+.lp-it-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.lp-it-card { background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+.lp-it-card-img img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+.lp-it-card-body { padding: 18px; }
+
+/* --- ステップ: 矢印 / タイムライン --- */
+.lp-step-arrow-list { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.lp-step-arrow { position: relative; background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); padding: 22px 18px; flex: 1; min-width: 180px; text-align: center; }
+.lp-step-arrow-n { font-size: 12px; font-weight: 700; color: var(--lp-primary); letter-spacing: .08em; margin-bottom: 8px; }
+.lp-step-arrow-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.lp-step-arrow-mark { display: none; }
+@media (min-width: 768px) {
+  .lp-step-arrow-mark { display: block; position: absolute; right: -22px; top: 50%; transform: translateY(-50%); color: var(--lp-primary); font-size: 22px; z-index: 1; font-weight: 700; }
+}
+.lp-step-tl-list { position: relative; padding-left: 32px; }
+.lp-step-tl-list::before { content: ''; position: absolute; left: 11px; top: 8px; bottom: 8px; width: 2px; background: var(--lp-line); }
+.lp-step-tl { position: relative; padding-bottom: 28px; }
+.lp-step-tl-dot { position: absolute; left: -28px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--lp-primary); border: 3px solid #fff; box-shadow: 0 0 0 2px var(--lp-primary); }
+.lp-step-tl-n { font-size: 12px; font-weight: 700; color: var(--lp-primary); letter-spacing: .08em; }
+.lp-step-tl-body .lp-step-title { font-size: 17px; margin: 4px 0; }
+
+/* --- 比較表: チェックバツ / カード --- */
+.lp-compare-check .lp-ico { display: inline-flex; width: 26px; height: 26px; border-radius: 50%; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; }
+.lp-ico-ok { background: var(--lp-primary); color: #fff; }
+.lp-ico-ng { background: #d8dadf; color: #8a8580; }
+.lp-ico-tri { background: var(--lp-accent); color: #2a2200; }
+.lp-cmp-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+.lp-cmp-card { position: relative; background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); padding: 24px; }
+.lp-cmp-card-us { border: 2px solid var(--lp-primary); box-shadow: 0 8px 24px color-mix(in srgb, var(--lp-primary) 18%, transparent); }
+.lp-cmp-card-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--lp-accent); color: #2a2200; font-size: 12px; font-weight: 700; padding: 4px 14px; border-radius: 20px; white-space: nowrap; }
+.lp-cmp-card-name { font-size: 18px; font-weight: 700; margin-bottom: 14px; text-align: center; }
+.lp-cmp-card ul { list-style: none; padding: 0; margin: 0; }
+.lp-cmp-card li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--lp-line); font-size: 14px; }
+.lp-cmp-card li:last-child { border-bottom: none; }
+.lp-cmp-card-k { color: var(--lp-muted); }
+.lp-cmp-card-v { font-weight: 700; }
+
+/* --- 仕様表: 枠囲み / 2カラム --- */
+.lp-spec-bd { margin: 0; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); overflow: hidden; }
+.lp-spec-bd-row { display: flex; border-bottom: 1px solid var(--lp-line); }
+.lp-spec-bd-row:last-child { border-bottom: none; }
+.lp-spec-bd dt { width: 35%; background: #fafaf8; padding: 14px 18px; font-weight: 700; }
+.lp-spec-bd dd { flex: 1; padding: 14px 18px; margin: 0; }
+.lp-spec-2c-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.lp-spec-2c-item { background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); padding: 16px; }
+.lp-spec-2c-k { font-size: 12px; color: var(--lp-muted); margin-bottom: 4px; }
+.lp-spec-2c-v { font-size: 17px; font-weight: 700; }
+
+/* --- 価格表: リスト型 / 強調1プラン --- */
+.lp-pricing-list .lp-plan-row-list { display: flex; flex-direction: column; gap: 14px; }
+.lp-plan-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); padding: 20px 24px; }
+.lp-plan-row-featured { border: 2px solid var(--lp-primary); }
+.lp-plan-row-info { flex: 1; }
+.lp-plan-row-info .lp-plan-features { margin: 8px 0 0; }
+.lp-plan-row-price { text-align: right; }
+.lp-plan-row-price .lp-plan-price { font-size: 26px; }
+.lp-pricing-single .lp-plan-single { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center; background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); padding: 32px; box-shadow: 0 8px 24px rgba(0,0,0,.05); }
+.lp-pricing-single .lp-plan-old { text-decoration: line-through; color: var(--lp-muted); font-size: 18px; font-weight: 400; margin-right: 10px; }
+.lp-pricing-single .lp-plan-price { font-size: 38px; }
+.lp-plan-features-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
+.lp-plan-single-cta { text-align: center; }
+.lp-plan-single-cta .lp-btn { display: block; width: 100%; }
+
+/* --- ギャラリー: モザイク / 横スクロール --- */
+.lp-gallery-mosaic { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 160px; gap: 10px; }
+.lp-gallery-mos-item { margin: 0; overflow: hidden; border-radius: var(--lp-radius); position: relative; }
+.lp-gallery-mos-item img { width: 100%; height: 100%; object-fit: cover; }
+.lp-gallery-mos-item figcaption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,.6)); color: #fff; font-size: 12px; padding: 16px 10px 8px; }
+.lp-gal-mos-1 { grid-column: span 2; grid-row: span 2; }
+.lp-gal-mos-4 { grid-column: span 2; }
+.lp-gallery-scroll { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x mandatory; }
+.lp-gallery-scroll-item { margin: 0; flex-shrink: 0; width: 280px; scroll-snap-align: start; }
+.lp-gallery-scroll-item img { width: 280px; height: 280px; object-fit: cover; border-radius: var(--lp-radius); }
+.lp-gallery-scroll-item figcaption { font-size: 12px; color: var(--lp-muted); margin-top: 6px; }
+.lp-gallery-scroll-hint { text-align: center; font-size: 12px; color: var(--lp-muted); margin-top: 8px; }
+
+/* --- 口コミ: 1件大きく / 平均+引用 --- */
+.lp-review-big-card { display: flex; gap: 24px; align-items: center; background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); padding: 28px; box-shadow: 0 4px 16px rgba(0,0,0,.04); }
+.lp-review-big-img { flex-shrink: 0; }
+.lp-review-big-img img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
+.lp-review-big-body { flex: 1; }
+.lp-review-big-text { font-size: 18px; font-weight: 600; line-height: 1.6; margin: 8px 0; }
+.lp-reviews-avg-hero { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 32px; }
+.lp-reviews-avg-big { font-size: 56px; font-weight: 800; color: var(--lp-accent); line-height: 1; }
+.lp-reviews-avg .lp-reviews-avg-stars { font-size: 22px; }
+.lp-review-quote-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.lp-review-quote { margin: 0; background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); padding: 18px; }
+.lp-review-quote blockquote { margin: 0 0 8px; font-size: 14px; font-weight: 600; line-height: 1.5; }
+.lp-review-quote blockquote::before { content: '\\201C'; color: var(--lp-primary); font-weight: 800; }
+.lp-review-quote blockquote::after { content: '\\201D'; color: var(--lp-primary); font-weight: 800; }
+.lp-review-quote figcaption { font-size: 12px; color: var(--lp-muted); }
+
+/* --- FAQ: 2カラム / 展開リスト --- */
+.lp-faq-2c-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.lp-faq-2c-item { background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); padding: 18px; }
+.lp-faq-2c-q { font-weight: 700; margin-bottom: 8px; font-size: 15px; }
+.lp-faq-2c-a { font-size: 14px; color: var(--lp-muted); }
+.lp-faq-list2 .lp-faq-q { padding: 18px 20px; background: #fff; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); margin-bottom: 8px; }
+.lp-faq-list2 .lp-faq-q span { flex: 1; font-weight: 700; }
+.lp-faq-list2 .lp-faq-q::after { content: ''; width: 12px; height: 12px; border-right: 3px solid var(--lp-primary); border-bottom: 3px solid var(--lp-primary); transform: rotate(45deg); transition: transform .2s; margin-top: 4px; }
+.lp-faq-list2[open] .lp-faq-q::after, .lp-faq-list2.lp-faq-item[open] .lp-faq-q::after { transform: rotate(-135deg); margin-top: 8px; }
+.lp-faq-list2 .lp-faq-a { padding: 0 20px 18px; }
+
+/* --- 動画: 正方形 / 全幅 --- */
+.lp-video-sq { aspect-ratio: 1/1; max-width: 480px; margin: 0 auto; }
+.lp-video-square-sec .lp-container { max-width: 600px; }
+.lp-video-full { border-radius: 0; aspect-ratio: 21/9; }
+.lp-video-full-sec .lp-video-frame { border-radius: 0; }
+
+/* --- カウントダウン: バー型 / 円形 --- */
+.lp-countdown-bar { padding: 0; }
+.lp-cd-bar-inner { display: flex; align-items: center; gap: 20px; padding: 16px 0; flex-wrap: wrap; }
+.lp-cd-bar-eb { font-size: 12px; font-weight: 700; background: rgba(255,255,255,.2); padding: 4px 10px; border-radius: 20px; }
+.lp-cd-bar-title { font-weight: 700; font-size: 16px; }
+.lp-cd-bar-time { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; margin-left: auto; }
+.lp-countdown-circles .lp-cd-circles { gap: 16px; }
+.lp-cd-circle { width: 96px; height: 96px; border-radius: 50%; background: rgba(255,255,255,.15); display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,.3); }
+.lp-cd-circle .lp-cd-num { font-size: 28px; }
+.lp-cd-circle .lp-cd-lbl { font-size: 10px; letter-spacing: .1em; opacity: .85; }
+
+/* --- CTA: カード / 分割 --- */
+.lp-cta-card-sec { padding: 56px 0; }
+.lp-cta-card { background: #fff; border-radius: var(--lp-radius); padding: 40px; text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,.08); border: 1px solid var(--lp-line); }
+.lp-cta-card .lp-cta-title, .lp-cta-card .lp-cta-sub, .lp-cta-card .lp-cta-note { color: var(--lp-text); }
+.lp-cta-split { padding: 0; }
+.lp-cta-split-row { display: grid; grid-template-columns: 1fr 1fr; align-items: center; min-height: 420px; }
+.lp-cta-split-text { padding: 48px; }
+.lp-cta-split-img img { width: 100%; height: 100%; min-height: 420px; object-fit: cover; }
+
+/* --- フッター: 4カラム / ミニマル --- */
+.lp-footer-cols { padding: 56px 0; }
+.lp-foot-cols { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 32px; }
+.lp-foot-desc { font-size: 13px; color: var(--lp-muted); margin-top: 12px; line-height: 1.7; }
+.lp-foot-col h4 { font-size: 13px; font-weight: 700; margin: 0 0 12px; color: var(--lp-text); }
+.lp-foot-col ul { list-style: none; padding: 0; margin: 0; }
+.lp-foot-col li { margin-bottom: 8px; }
+.lp-foot-col a { color: var(--lp-muted); font-size: 13px; }
+.lp-foot-col a:hover { color: var(--lp-primary); }
+.lp-footer-minimal { padding: 32px 0; text-align: center; }
+.lp-footer-minimal .lp-foot-shop { font-size: 16px; margin-bottom: 12px; }
+.lp-footer-minimal .lp-foot-links { justify-content: center; margin-bottom: 12px; }
+
+/* =========================================================
    レスポンシブ
    ========================================================= */
 @media (max-width: 900px) {
@@ -282,6 +473,27 @@
   .lp-hero { min-height: auto !important; padding: 56px 0; }
   .lp-hero-inner { max-width: 100%; }
   .lp-cmp-table th, .lp-cmp-table td { padding: 12px 8px; font-size: 13px; }
+  /* バリアント別 SP対応 */
+  .lp-hero-split-row { grid-template-columns: 1fr; }
+  .lp-hero-split-img img { min-height: 280px; }
+  .lp-hero-split-text { padding: 32px 20px; }
+  .lp-it-card-grid { grid-template-columns: 1fr; }
+  .lp-cmp-cards { grid-template-columns: 1fr; }
+  .lp-spec-2c-grid { grid-template-columns: 1fr; }
+  .lp-plan-row { flex-direction: column; align-items: flex-start; }
+  .lp-plan-row-price { text-align: left; width: 100%; }
+  .lp-pricing-single .lp-plan-single { grid-template-columns: 1fr; }
+  .lp-plan-features-2col { grid-template-columns: 1fr; }
+  .lp-review-big-card { flex-direction: column; text-align: center; }
+  .lp-review-quote-grid { grid-template-columns: 1fr; }
+  .lp-faq-2c-grid { grid-template-columns: 1fr; }
+  .lp-cta-split-row { grid-template-columns: 1fr; }
+  .lp-cta-split-text { padding: 40px 20px; }
+  .lp-cta-split-img img { min-height: 280px; }
+  .lp-foot-cols { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .lp-gallery-mosaic { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 140px; }
+  .lp-gal-mos-1 { grid-column: span 2; grid-row: span 1; }
+  .lp-step-arrow-list { flex-direction: column; }
 }
 @media (max-width: 480px) {
   .lp-root { font-size: 14px; }

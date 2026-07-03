@@ -107,16 +107,20 @@
     },
 
     // ============ モジュール操作 ============
-    addModule(type, atIndex) {
+    addModule(type, atIndex, variantId) {
       if (!LP.Modules) return null;
       const def = LP.Modules.get(type);
       if (!def) return null;
+      const variant = LP.Modules.getVariant(type, variantId) || def.variants[0];
       this.beginChange();
       const mod = {
         id: genId(type),
         type: type,
-        // スキーマからデフォルト値を生成
-        data: LP.Modules.defaultData(def.schema)
+        // 選択バリアントのスキーマからデフォルト値を生成 + variantId を付与
+        data: Object.assign(
+          { variantId: variant.id },
+          LP.Modules.defaultData(variant.schema)
+        )
       };
       if (typeof atIndex === 'number') {
         this.project.modules.splice(atIndex, 0, mod);
@@ -150,6 +154,29 @@
       this.selectedId = copy.id;
       this._emit('changed');
       this._emit('selection', copy.id);
+    },
+
+    /** バリアント切替: 共通キーは保持、新バリアント専用キーは初期値を補完、旧専用キーは削除 */
+    switchVariant(id, newVariantId) {
+      const mod = this.project.modules.find(m => m.id === id);
+      if (!mod) return;
+      const type = mod.type;
+      const newVariant = LP.Modules.getVariant(type, newVariantId);
+      if (!newVariant || newVariant.id === (mod.data.variantId)) return;
+      const oldVariant = LP.Modules.getVariant(type, mod.data.variantId);
+      const oldKeys = oldVariant ? oldVariant.schema.map(f => f.key) : [];
+      const newKeys = newVariant.schema.map(f => f.key);
+      // 新バリアントのデフォルト値
+      const newDefaults = LP.Modules.defaultData(newVariant.schema);
+      this.beginChange();
+      const newData = { variantId: newVariant.id };
+      // 新スキーマの各キーについて、旧データに同名キーがあれば保持、無ければデフォルト
+      newKeys.forEach(k => {
+        newData[k] = (mod.data[k] !== undefined) ? mod.data[k] : newDefaults[k];
+      });
+      mod.data = newData;
+      this._emit('changed', { moduleId: id, variant: true });
+      this._emit('selection', id);
     },
 
     moveModule(id, dir) {
